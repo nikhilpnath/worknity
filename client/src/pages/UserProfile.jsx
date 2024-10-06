@@ -51,7 +51,7 @@ const UserProfile = () => {
   if( window.confirm("Do you want to delete your account? ")){
 
     const result= await apiRequest({
-      url:`/user/delete-user/${user.id}`,
+      url:"/user/delete-user",
       token:user.token,
       method:"DELETE"
     })

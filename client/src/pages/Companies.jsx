@@ -1,6 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { CompanyCard, CustomButton, Header, Loading, SortBox } from "../components";
+import {
+  CompanyCard,
+  CustomButton,
+  Header,
+  Loading,
+  SortBox,
+} from "../components";
 import { apiRequest, updateURl } from "../utils";
 
 const Companies = () => {
@@ -13,69 +19,57 @@ const Companies = () => {
   const [sort, setSort] = useState("Newest");
   const [isFetching, setIsFetching] = useState(false);
 
-
   const navigate = useNavigate();
   const location = useLocation();
 
-  
-
-  const handleSearchSubmit = async(e) => {
-
+  const handleSearchSubmit = async (e) => {
     e.preventDefault();
 
     await fetchingCompanies();
-  }
-
-  const handleShowMore = async(e) => {
-    e.preventDefault();
-    setPage((prev)=>prev+1)
   };
 
+  const handleShowMore = async (e) => {
+    e.preventDefault();
+    setPage((prev) => prev + 1);
+  };
 
-  const fetchingCompanies = async()=>{
-    
-    setIsFetching(true)
-
+  const fetchingCompanies = async () => {
+    setIsFetching(true);
 
     const newURL = updateURl({
-      pageNum:page,
-      query:searchQuery,
-      cmpLoc:cmpLocation,
+      pageNum: page,
+      query: searchQuery,
+      cmpLoc: cmpLocation,
       sort: sort,
-      navigate:navigate,
-      location:location,
-    })
+      navigate: navigate,
+      location: location,
+    });
 
-   try{
-
-  
+    try {
       const res = await apiRequest({
-        url:newURL,
-        method:"GET"
-      })
-  
+        url: newURL,
+        method: "GET",
+      });
+
       // console.log(res)
       setNumPage(res.data.numOfPage);
       setRecordsCount(res.data.total);
-      setData(res.data.companies)
+      setData(res.data.companies);
 
-      setIsFetching(false)
+      setIsFetching(false);
+    } catch (err) {
+      console.log(err);
     }
-    catch(err){
-      console.log(err)
-    }
-   
-  }
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchingCompanies();
-  },[page,sort])
+  }, [page, sort]);
 
   return (
-    <div className='w-full '>
-
+    <div className="w-full ">
       <Header
-        title='Find Your Dream Company'
+        title="Find Your Dream Company"
         type
         handleClick={handleSearchSubmit}
         searchQuery={searchQuery}
@@ -84,44 +78,41 @@ const Companies = () => {
         setLocation={setCmpLocation}
       />
 
-      <div className='container mx-auto flex flex-col gap-5 2xl:gap-10 px-5  py-6'>
-        <div className='flex items-center justify-between mb-4'>
-          <p className='text-sm md:text-base'>
-            Shwoing: <span className='font-semibold'>{recordsCount}</span> Companies
-            Available
+      <div className="container mx-auto flex flex-col gap-5 2xl:gap-10 px-5  py-6">
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-sm md:text-base">
+            Shwoing: <span className="font-semibold">{recordsCount}</span>{" "}
+            Companies Available
           </p>
 
-          <div className='flex flex-col md:flex-row gap-0 md:gap-2 md:items-center'>
-            <p className='text-sm md:text-base'>Sort By:</p>
+          <div className="flex flex-col md:flex-row gap-0 md:gap-2 md:items-center">
+            <p className="text-sm md:text-base">Sort By:</p>
 
             <SortBox sort={sort} setSort={setSort} />
           </div>
         </div>
 
-
-        <div className='w-full flex flex-col gap-6'>
+        <div className="w-full flex flex-col gap-6">
           {data?.map((cmp, index) => (
-            
             <CompanyCard cmp={cmp} key={index} />
           ))}
 
-         
-          <p className='text-sm text-right'>
+          <p className="text-sm text-right">
             {data?.length} records out of {recordsCount}
           </p>
         </div>
 
         {isFetching && (
-          <div className='py-10'>
+          <div className="py-10">
             <Loading />
           </div>
-          )}
+        )}
 
-        {numPage > page  && (
-          <div className='w-full flex items-center justify-center pt-16'>
+        {numPage > page && (
+          <div className="w-full flex items-center justify-center pt-16">
             <CustomButton
               onClick={handleShowMore}
-              title='Load More'
+              title="Load More"
               containerStyles={`text-blue-600 py-1.5 px-5 focus:outline-none hover:bg-blue-700 hover:text-white rounded-full text-base border border-blue-600`}
             />
           </div>

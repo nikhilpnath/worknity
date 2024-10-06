@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import Jobs from "../models/jobModel.js";
 import Recruiters from "../models/recruiterModel.js";
 
@@ -15,11 +14,7 @@ export const createJob = async (req, res, next) => {
       requirements,
     } = req.body;
 
-    const id = req.user.userId;
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new Error(`No Company with id: ${id}`);
-    }
+    const id = req.user._id;
 
     const jobPost = {
       jobTitle,
@@ -36,14 +31,13 @@ export const createJob = async (req, res, next) => {
     await job.save();
 
     //update the company information with job id
-
-    const company = await Recruiters.findById(id);
+    const company = req.user;
 
     company.jobPosts.push(job._id); // pusing the job id into the array.
 
     await Recruiters.findByIdAndUpdate(id, company, {
       new: true,
-    }); // then an updation of the company
+    });
 
     res.status(200).json({
       success: true,
@@ -68,12 +62,6 @@ export const updateJob = async (req, res, next) => {
       requirements,
     } = req.body;
 
-    const id = req.user.userId;
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new Error(`No Company with id: ${id}`);
-    }
-
     const { jobId } = req.params;
 
     const updatedPost = {
@@ -84,7 +72,6 @@ export const updateJob = async (req, res, next) => {
       vacancies,
       experience,
       detail: { description, requirements },
-      _id: jobId,
     };
 
     await Jobs.findByIdAndUpdate(jobId, updatedPost, { new: true });
@@ -99,15 +86,13 @@ export const updateJob = async (req, res, next) => {
   }
 };
 
-
 export const getJobPosts = async (req, res, next) => {
   try {
     const { search, sort, location, jtype, exp } = req.query;
 
     const types = jtype?.split(",");
 
-    const experiences = exp.split(",");
-
+    const experiences = exp?.split(",");
 
     let queryObject = {};
 
@@ -120,13 +105,10 @@ export const getJobPosts = async (req, res, next) => {
     }
 
     if (exp) {
-  
       queryObject.experience = {
-        $in: experiences.map(expValue => new RegExp(`^${expValue}`) )
-            
+        $in: experiences.map((expValue) => new RegExp(`^${expValue}`)),
+      };
     }
-  }
-
 
     if (search) {
       const searchQuery = {
@@ -160,7 +142,6 @@ export const getJobPosts = async (req, res, next) => {
     // pagination
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 5;
-   
 
     //records count
     const totalJobs = await Jobs.countDocuments(queryResult);
@@ -227,21 +208,13 @@ export const deleteJobPost = async (req, res, next) => {
   try {
     const { jobId } = req.params;
 
-    await Jobs.findByIdAndDelete(jobId);
+    const job = await Jobs.findById(jobId);
 
-    //updating the jobPosts
+    if (!job) {
+      return res.status(404).json({ error: "Job post not found" });
+    }
 
-    const id = req.user.userId;
-
-    const company = await Recruiters.findById(id);
-
-    const indexToRemove = company.jobPosts.indexOf(jobId);
-
-    company.jobPosts.splice(indexToRemove, 1); // deleting the delted job post from the array.
-
-    await Recruiters.findByIdAndUpdate(id, company, {
-      new: true,
-    }); // then an updation of the company
+    await job.deleteOne(); // trigger middleware
 
     res.status(200).json({
       success: true,

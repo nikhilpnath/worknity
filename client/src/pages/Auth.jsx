@@ -1,125 +1,115 @@
-import React, {useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { Office } from "../assets";
-import { CustomButton, TextInput } from '../components'
-import * as yup from 'yup';
+import { CustomButton, TextInput } from "../components";
+import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { apiRequest } from "../utils";
 
-import { useSelector,useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { login } from "../redux/userSlice";
 
-import { LazyLoadImage } from 'react-lazy-load-image-component';
-import 'react-lazy-load-image-component/src/effects/blur.css';
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 import { toast } from "react-toastify";
 
 const Auth = () => {
-
   const [isRegister, setIsRegister] = useState(true);
   const [accountType, setAccountType] = useState("seeker");
 
   const { user } = useSelector((state) => state.user);
 
   const dispatch = useDispatch();
- 
+
   const navigate = useNavigate();
 
-  let schema ;
-  
-  if(isRegister){
+  let schema;
+
+  if (isRegister) {
     schema = yup.object().shape({
-    email:yup.string().email("Enter a valid email").required("Email Is Required"),
-    [accountType ==='seeker' ? 'seekerName' : 'companyName']:yup.string().min(5,'Atleast 5 Characters').required(),
-    password:yup.string().min(8,'length should be atleast 8').max(16,'length cannot exceed 16'),
-  })
-}
-
-else{
-
+      email: yup
+        .string()
+        .email("Enter a valid email")
+        .required("Email Is Required"),
+      [accountType === "seeker" ? "seekerName" : "companyName"]: yup
+        .string()
+        .min(5, "Atleast 5 Characters")
+        .required(),
+      password: yup
+        .string()
+        .min(8, "length should be atleast 8")
+        .max(16, "length cannot exceed 16"),
+    });
+  } else {
     schema = yup.object().shape({
-      email:yup.string().email("Enter a valid email").required("Email Is Required"),
-      password:yup.string().min(8,'length should be atleast 8').max(16,'length cannot exceed 16'),
-    })
- 
-
-}
-
+      email: yup
+        .string()
+        .email("Enter a valid email")
+        .required("Email Is Required"),
+      password: yup
+        .string()
+        .min(8, "length should be atleast 8")
+        .max(16, "length cannot exceed 16"),
+    });
+  }
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver : yupResolver(schema)
+    resolver: yupResolver(schema),
   });
 
-
-
-  const onSubmit = async(data) => {
-
-
+  const onSubmit = async (data) => {
     let URL = null;
 
-    if(isRegister){
-      if(accountType ==='seeker'){
-        URL = '/user/register'
+    if (isRegister) {
+      if (accountType === "seeker") {
+        URL = "/user/register";
+      } else {
+        URL = "/companies/register";
       }
-      else{
-        URL = '/companies/register'
-      }
-    }
-    else{
-      if(accountType ==='seeker'){
-        URL = '/user/login'
-      }
-      else{
-        URL = '/companies/login'
+    } else {
+      if (accountType === "seeker") {
+        URL = "/user/login";
+      } else {
+        URL = "/companies/login";
       }
     }
 
-  
+    const result = await apiRequest({
+      url: URL,
+      data: data,
+      method: "POST",
+    });
 
-      const result = await apiRequest({
-        url: URL,
-        data:data,
-        method:"POST"
-      })
+    if (result.status === 200) {
+      // console.log(result)
 
-      
-      if(result.status===200) {
+      const userData = result.data;
 
-        // console.log(result)
-  
-        const userData = result.data;   
-      
-          toast.success(userData.message);
-    
-        const info = {token:userData.token,...userData.user}
+      toast.success(userData.message);
 
-        dispatch(login(info));
+      const info = { token: userData.token, ...userData.user };
 
-
-        }
-
-        else{
-          console.log(result)
-          toast.error(result.error)
-        }
+      dispatch(login(info));
+    } else {
+      console.log(result);
+      toast.error(result.error || result);
+    }
   };
-
-  
 
   useEffect(() => {
     user?.token && navigate("/");
-  }, [user]);
+  }, [user, navigate]);
 
   return (
     <>
       <div className="flex justify-center lg:justify-around items-center h-[80vh]">
         <div className=" p-4 w-[26rem] sm:w-[36rem] ">
-
           <div className=" rounded-2xl bg-white p-6 text-left shadow-xl">
             <h3 className="text-xl font-semibold  text-black">
               {isRegister ? "Create Account" : "Sign In"}
@@ -183,8 +173,8 @@ else{
                       )}
                       error={
                         accountType === "seeker"
-                          ? errors.seekerName && errors.seekerName.message : 
-                          errors.companyName && errors.companyName.message
+                          ? errors.seekerName && errors.seekerName.message
+                          : errors.companyName && errors.companyName.message
                       }
                     />
                   </div>
@@ -192,7 +182,7 @@ else{
               )}
 
               <div className="w-full flex gap-1 md:gap-2">
-                <div className= "w-full">
+                <div className="w-full">
                   <TextInput
                     label="Password"
                     name="password"
@@ -202,8 +192,6 @@ else{
                     error={errors.password && errors.password.message}
                   />
                 </div>
-
-                
               </div>
 
               <div className="mt-2">
@@ -232,12 +220,12 @@ else{
           </div>
         </div>
 
-
-<LazyLoadImage
-    alt={"office"}
-    effect="blur"
-    className="hidden lg:block w-[40rem] "
-    src={Office} />
+        <LazyLoadImage
+          alt={"office"}
+          effect="blur"
+          className="hidden lg:block w-[40rem] "
+          src={Office}
+        />
       </div>
     </>
   );

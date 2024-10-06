@@ -16,6 +16,7 @@ import {
 import { useSelector } from "react-redux";
 
 function Layout() {
+  
   const { user } = useSelector((state) => state.user);
 
   return user && user.token ? (
@@ -34,15 +35,13 @@ const AppRoutes = () => {
       <Routes>
         {/* if user is authenticated he can access these routes         */}
 
-        <Route element={<Layout />}> 
-        
+        <Route element={<Layout />}>
           <Route path="/" element={<FindJobs />} />
 
           <Route
             path="/companies"
             element={user?.accountType !== "company" && <Companies />}
           />
-
           <Route
             path={
               user?.accountType === "seeker"

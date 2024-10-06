@@ -1,33 +1,41 @@
-import mongoose,{Schema} from "mongoose";
+import mongoose from "mongoose";
+import { hashPassword } from "../utils/auth.js";
+import { findByCredentials } from "../utils/user.js";
 
-let recruiterSchema = new mongoose.Schema({
-    name:{
-        type:String,
-        
+let recruiterSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      trim: true,
     },
-    email:{
-        type:String,
-        unique:true,
+    email: {
+      type: String,
+      unique: true,
+      lowercase: true,
     },
-    password:({
-        type : String,
-
-    }),
-    accountType :{
-        type:String,
-        default:"seeker"
+    password: {
+      type: String,
     },
-    contact:{type:String},
-    location:{type:String},
-    about:{type:String},
-    profileUrl:{type:String},
+    accountType: {
+      type: String,
+      default: "company",
+    },
+    contact: { type: String },
+    location: { type: String },
+    about: { type: String },
+    profileUrl: { type: String },
+    jobPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Jobs" }],
+  },
+  { timestamps: true }
+);
 
-    jobPosts:[{type:Schema.Types.ObjectId, ref:"Jobs" }]  //data comes from the job model
-},
-    {timestamps:true} 
-)
+//password hashing
+recruiterSchema.pre("save", hashPassword);
 
-const Recruiters = mongoose.model("Recruiters", recruiterSchema)
+recruiterSchema.statics.findByCredentials = async function (email, password) {
+  return findByCredentials(this, email, password);
+};
+
+const Recruiters = mongoose.model("Recruiters", recruiterSchema);
 
 export default Recruiters;
-

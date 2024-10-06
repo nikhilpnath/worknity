@@ -1,50 +1,46 @@
 import express from "express";
-import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-
-import morgan from "morgan"; // logging middlware - used to log requests,erros and more
+import morgan from "morgan";
 import helmet from "helmet";
-
-import xss from "xss-clean"; //data sanitization against XSS (cross site scripting)
-
-import mongoSanitize from "express-mongo-sanitize"; //data sanitization against query injection
-
+import xss from "xss-clean";
+import mongoSanitize from "express-mongo-sanitize";
 import router from "./routes/index.js";
 import errorHandler from "./middleware/errorHandler.js";
+import { connectToDB } from "./config/db.js";
 
 dotenv.config();
+
 const app = express();
 
-const port = process.env.PORT || 8000;
-
-app.use(cors({
-  origin:'https://worknity.netlify.app',
-  methods:['GET','POST','PUT','DELETE'],
-  credentials:true
-}));
+app.use(
+  cors({
+    origin: "https://worknity.netlify.app",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(helmet()); // it secures our application by setting several HTTP headers.
+// secure header http
+app.use(helmet());
 
 //data sanitization middlewares
 app.use(xss());
 app.use(mongoSanitize());
 
+//logging middleware
 app.use(morgan("dev"));
-// here the dev is a preset (it means pre defined logging format),which is ideal for development cause the format includes http method, url, color-coded status codes, response time, and content length
-// there are other presets like dev, which are tiny, short, combined and common - you can check it out
 
-mongoose
-  .connect(process.env.MONGO_URL)
-  .then(() => console.log("DB Connected SuccessFully"))
-  .catch((err) => console.log("DB Connection Failed : " + err));
+//db connection
+connectToDB();
 
 app.use(router);
-
 app.use(errorHandler);
+
+const port = process.env.PORT || 8000;
 
 app.listen(port, () => {
   console.log(`Running on port ${port}`);

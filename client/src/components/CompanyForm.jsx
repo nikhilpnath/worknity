@@ -28,12 +28,9 @@ const CompanyForm = ({ open, setOpen }) => {
     resolver:yupResolver(updateSchema)
   });
 
-
-
   const [profileImage, setProfileImage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
- 
 
   const onSubmit = async(data) => {
     
@@ -68,9 +65,7 @@ const CompanyForm = ({ open, setOpen }) => {
           localStorage.setItem("user",JSON.stringify(storeData));
 
           setTimeout(() => {
-
             window.location.reload();
-
           }, 900);
 
       } else{
@@ -81,7 +76,6 @@ const CompanyForm = ({ open, setOpen }) => {
   };
 
   const closeModal = () => setOpen(false);
-
 
   return (
     <>
@@ -110,7 +104,7 @@ const CompanyForm = ({ open, setOpen }) => {
               leaveFrom='opacity-100 scale-100'
               leaveTo='opacity-0 scale-95'
             >
-              <Dialog.Panel className='w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
+              <Dialog.Panel className='w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all z-50 '>
                 <Dialog.Title
                   as='h3'
                   className='text-lg font-semibold leading-6 text-gray-900'
