@@ -1,4 +1,3 @@
-import React from "react";
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 
 import { Footer, NavBar } from "../components";
@@ -14,9 +13,9 @@ import {
   UserProfile,
 } from "../pages";
 import { useSelector } from "react-redux";
+import NoRoute from "../pages/NoRoute";
 
 function Layout() {
-  
   const { user } = useSelector((state) => state.user);
 
   return user && user.token ? (
@@ -67,10 +66,10 @@ const AppRoutes = () => {
 
           <Route path={"/job-details/:id"} element={<JobDetails />} />
           <Route path={"/applicants/:id"} element={<Applicants />} />
+          <Route path="*" element={<NoRoute />} />
         </Route>
 
-        {/* and if not authenticated he can only access these routes */}
-
+        {/* and if not authenticated,  he can only access these routes */}
         <Route path="/about-us" element={<About />} />
         <Route path="/user-auth" element={<Auth />} />
       </Routes>
