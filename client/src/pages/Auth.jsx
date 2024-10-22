@@ -18,11 +18,10 @@ import { toast } from "react-toastify";
 const Auth = () => {
   const [isRegister, setIsRegister] = useState(true);
   const [accountType, setAccountType] = useState("seeker");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { user } = useSelector((state) => state.user);
-
   const dispatch = useDispatch();
-
   const navigate = useNavigate();
 
   let schema;
@@ -65,7 +64,7 @@ const Auth = () => {
 
   const onSubmit = async (data) => {
     let URL = null;
-
+    setIsSubmitting(true); 
     if (isRegister) {
       if (accountType === "seeker") {
         URL = "/user/register";
@@ -87,19 +86,16 @@ const Auth = () => {
     });
 
     if (result.status === 200) {
-      // console.log(result)
-
       const userData = result.data;
-
       toast.success(userData.message);
-
       const info = { token: userData.token, ...userData.user };
-
       dispatch(login(info));
     } else {
       console.log(result);
-      toast.error(result.error || result);
+      toast.error(result?.error ?? result);
     }
+
+    setIsSubmitting(false); 
   };
 
   useEffect(() => {
@@ -198,7 +194,16 @@ const Auth = () => {
                 <CustomButton
                   type="submit"
                   containerStyles={`inline-flex justify-center rounded-md bg-blue-600 px-8 py-2 text-sm font-medium text-white outline-none hover:bg-blue-800`}
-                  title={isRegister ? "Create Account" : "Login"}
+                  title={
+                    isSubmitting
+                      ? isRegister
+                        ? "Creating Account..."
+                        : "Logging in..."
+                      : isRegister
+                      ? "Create Account"
+                      : "Login"
+                  }
+                  disabled={isSubmitting}
                 />
               </div>
             </form>
