@@ -104,9 +104,23 @@ export const updateUser = async (req, res, next) => {
 
 export const getUser = async (req, res, next) => {
   try {
+    const userData = {
+      name: req.user.name,
+      email: req.user.email,
+      about: req.user.about,
+      contact: req.user.contact,
+      headLine: req.user.headLine,
+      location: req.user.location,
+      profileUrl: req.user.profileUrl,
+      resumeUrl: req.user.resumeUrl,
+    };
+
+    console.log(userData);
+    
+
     res.status(200).json({
       success: true,
-      user: req.user,
+      user: userData,
     });
   } catch (err) {
     console.log(err);

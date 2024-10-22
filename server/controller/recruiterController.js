@@ -88,7 +88,7 @@ export const updateCompanyProfile = async (req, res, next) => {
   }
 };
 export const getCompanyProfile = async (req, res, next) => {
-  try {
+  try {    
     res.status(200).json({
       success: true,
       data: req.user,
@@ -208,14 +208,26 @@ export const getCompanyById = async (req, res, next) => {
 
     const company = await Recruiters.findById({ _id: id }).populate({
       path: "jobPosts",
+      select: "_id detail jobTitle jobType location createdAt",
       options: {
         sort: "-_id",
       },
     });
 
+    const data = {
+      name:company.name,
+      email:company.email,
+      jobPosts:company.jobPosts,
+      about:company.about,
+      contact:company.contact,
+      location:company.location,
+      profileUrl:company.profileUrl
+    }
+
+  
     res.status(200).json({
       success: true,
-      data: company,
+      data,
     });
   } catch (error) {
     console.log(error);
