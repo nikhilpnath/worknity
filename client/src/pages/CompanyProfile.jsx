@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { HiLocationMarker } from "react-icons/hi";
 import { AiOutlineMail } from "react-icons/ai";
@@ -18,6 +19,8 @@ const CompanyProfile = () => {
   const [openForm, setOpenForm] = useState(false);
 
   const { id } = useParams();
+
+  const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
@@ -90,29 +93,46 @@ const CompanyProfile = () => {
 
         {companyInfo?.about && (
           <div>
-            <p className="text-base text-slate-600 py-2.5 px-5 my-3.5 md:mx-auto w-full  md:w-8/12 text-justify break-all border-dashed border-2 border-[#c9b7b7] rounded-xl">
+            <p className="text-base text-slate-600 bg-[#f5f5dc] py-2.5 px-5 my-3.5 md:mx-auto w-full  md:w-8/12 text-justify break-all border-dashed border-2  rounded-xl">
               {companyInfo?.about}
             </p>
           </div>
         )}
       </div>
 
-      <div className="w-full mt-20 flex flex-col gap-2">
-        <p className="text-center sm:text-left"> Jobs Posted</p>
-
-        <div className="flex flex-wrap justify-center sm:justify-normal gap-6">
-          {companyInfo?.jobPosts?.map((job) => {
-            const data = {
-              name: companyInfo?.name,
-              email: companyInfo?.email,
-              logo: companyInfo?.profileUrl,
-              ...job,
-            };
-
-            return <JobCard data={data} key={job._id} />;
-          })}
+      {/* no jobs found */}
+      {user?.accountType === "seeker" && companyInfo?.jobPosts.length === 0 ? (
+        <div className="text-center mt-11">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-[#b38787] capitalize">
+            Thank you for your interest
+          </h1>
+          <p className="text-gray-500 my-2">
+            But there are no job openings available at this time. Please check
+            back at another time
+          </p>
+          <button
+            onClick={() => navigate("/companies")}
+            className="bg-[#b38787] text-white py-2 px-3 rounded"
+          >
+            Back to Companies
+          </button>
         </div>
-      </div>
+      ) : (
+        <div className="w-full mt-20 flex flex-col gap-2">
+          <p className="text-center sm:text-left"> Jobs Posted</p>
+          <div className="flex flex-wrap justify-center sm:justify-normal gap-6">
+            {companyInfo?.jobPosts?.map((job) => {
+              const data = {
+                name: companyInfo?.name,
+                email: companyInfo?.email,
+                logo: companyInfo?.profileUrl,
+                ...job,
+              };
+              return <JobCard data={data} key={job._id} />;
+            })}
+          </div>
+        </div>
+      )}
 
       <CompanyForm open={openForm} setOpen={setOpenForm} />
     </div>
