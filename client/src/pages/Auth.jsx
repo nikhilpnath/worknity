@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { Office } from "../assets";
-import { CustomButton, TextInput } from "../components";
+import { CustomButton, TextInput, Meta } from "../components";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { apiRequest } from "../utils";
@@ -64,7 +64,7 @@ const Auth = () => {
 
   const onSubmit = async (data) => {
     let URL = null;
-    setIsSubmitting(true); 
+    setIsSubmitting(true);
     if (isRegister) {
       if (accountType === "seeker") {
         URL = "/user/register";
@@ -95,7 +95,7 @@ const Auth = () => {
       toast.error(result?.error ?? result);
     }
 
-    setIsSubmitting(false); 
+    setIsSubmitting(false);
   };
 
   useEffect(() => {
@@ -104,6 +104,13 @@ const Auth = () => {
 
   return (
     <>
+      <Meta
+        title="Log in or Sign up | Worknity"
+        description="Join Worknity - the ultimate job portal to connect job seekers with recruiters. Apply for your dream jobs, post job openings, and discover opportunities to grow your career. Start your journey with Worknity today!"
+        robots="index, follow"
+        url="https://worknity.netlify.app/user-auth"
+      />
+
       <div className="flex justify-center lg:justify-around items-center h-[80vh]">
         <div className=" p-4 w-[26rem] sm:w-[36rem] ">
           <div className=" rounded-2xl bg-white p-6 text-left shadow-xl">

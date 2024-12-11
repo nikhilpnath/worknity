@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { CustomButton, JobCard, JobTypes, TextInput } from "../components";
+import {
+  CustomButton,
+  JobCard,
+  JobTypes,
+  Meta,
+  TextInput,
+} from "../components";
 
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
@@ -86,6 +92,11 @@ const UploadJob = () => {
 
   return (
     <div className=" mx-auto flex flex-col md:flex-row gap-8 2xl:gap-14 bg-[#f7fdfd] px-5">
+      <Meta
+        title="Post a new job | Worknity"
+        description="Easily post your job openings on Worknity. Reach a wide pool of talent, manage applications, and hire the best candidates for your company."
+        url="https://worknity.netlify.app/upload-job"
+      />
       <div className="w-full h-fit md:w-2/3 2xl:w-2/4 bg-white px-5 py-10 md:px-10 shadow-md">
         <div>
           <p className="text-gray-500 font-semibold text-2xl">Job Post</p>

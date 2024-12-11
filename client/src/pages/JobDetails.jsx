@@ -4,7 +4,7 @@ import moment from "moment"; //for the job posted time
 import { AiOutlineSafetyCertificate } from "react-icons/ai";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { CustomButton, JobCard, JobUpdateForm } from "../components";
+import { CustomButton, JobCard, JobUpdateForm, Meta } from "../components";
 import { useSelector } from "react-redux";
 import { apiRequest } from "../utils";
 import { NoProfile } from "../assets";
@@ -79,8 +79,18 @@ const JobDetails = () => {
     }
   };
 
+  const userMetaTitle = jobData
+    ? `${jobData?.jobTitle} - ${jobData?.company.name}`
+    : "Explore and Apply Now";
+
   return (
     <div className="container mx-auto">
+      <Meta
+        userTitle={`${userMetaTitle} | Worknity `}
+        cmpTitle={`${jobData?.jobTitle ?? "Exciting Opportunities" } | Worknity `}
+        description="Discover job opportunities or post openings on Worknity. Browse detailed job descriptions, responsibilities, and benefits. Connect talent with opportunities!"
+        url={`https://worknity.netlify.app/job-details/${id}`}
+      />
       <div className="w-full flex flex-col md:flex-row gap-10">
         {jobData && (
           <>

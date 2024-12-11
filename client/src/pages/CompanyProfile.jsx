@@ -5,7 +5,7 @@ import { HiLocationMarker } from "react-icons/hi";
 import { AiOutlineMail } from "react-icons/ai";
 import { FiPhoneCall, FiEdit3 } from "react-icons/fi";
 import { Link, useParams } from "react-router-dom";
-import { CustomButton, JobCard, CompanyForm } from "../components";
+import { CustomButton, JobCard, CompanyForm, Meta } from "../components";
 
 import { useDispatch, useSelector } from "react-redux";
 import { apiRequest } from "../utils";
@@ -44,8 +44,17 @@ const CompanyProfile = () => {
     id && fetchCompanyById();
   }, [id]);
 
+
   return (
     <div className="container mx-auto p-5">
+      <Meta
+        userTitle={`${companyInfo?.name ?? "Explore"} | Worknity`}
+        userDescption="Discover company profiles on Worknity. Explore potential employers, learn about their culture, and find the perfect job match for your career."
+        cmpTitle="Manage Your Profile | Worknity"
+        cmpDescription="Create and manage your company profile on Worknity. Showcase your brand, post job openings, and connect with qualified candidates to build your ideal team."
+        userUrl={`https://worknity.netlify.app/company-profile/${id}`}
+        cmpUrl={`https://worknity.netlify.app/company-profile`}
+      />
       <div>
         <div className="w-full flex flex-col md:flex-row gap-3 justify-between">
           <h2 className="text-gray-600 text-xl font-semibold">
@@ -100,7 +109,7 @@ const CompanyProfile = () => {
         )}
       </div>
 
-      {/* no jobs found */}
+      {/* no job opennings */}
       {user?.accountType === "seeker" && companyInfo?.jobPosts.length === 0 ? (
         <div className="text-center mt-11">
           <h1 className="text-3xl sm:text-4xl font-extrabold text-[#b38787] capitalize">

@@ -4,7 +4,7 @@ import { HiLocationMarker } from "react-icons/hi";
 import { AiOutlineMail } from "react-icons/ai";
 import { FiPhoneCall } from "react-icons/fi";
 import { NoProfile } from "../assets";
-import { UserForm } from "../components";
+import { Meta, UserForm } from "../components";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { apiRequest } from "../utils";
 import { toast } from "react-toastify";
@@ -14,7 +14,7 @@ import { seekerData } from "../redux/seekerSlice";
 const UserProfile = () => {
   const { user } = useSelector((state) => state.user);
   const { seekerInfo } = useSelector((state) => state.seeker);
-
+  
   const {id} = useParams();
 
   const [open, setOpen] = useState(false);
@@ -55,7 +55,6 @@ const UserProfile = () => {
       token:user.token,
       method:"DELETE"
     })
-    console.log(result)
 
     if(result.status === 200){
       toast.success(result.data.message)
@@ -69,8 +68,17 @@ const UserProfile = () => {
 
   }
 
+
   return (
     <div className="container mx-auto flex items-center justify-center py-10">
+      <Meta
+        userTitle="Manage Your Profile | Worknity"
+        userDescption="View and manage your professional profile on Worknity. Showcase your skills, experience, and job preferences to attract top recruiters and land your next career opportunity."
+        cmpTitle={`${seekerInfo?.name ?? "Applicant profile"} | Worknity`}
+        cmpDescription="Easily browse through applicant profiles, Contact top talent and post job openings to find your perfect hire."
+        userUrl="https://worknity.netlify.app/user-profile"
+        cmpUrl={`https://worknity.netlify.app/user-profile/${id}`}
+      />
       <div className="w-full md:w-2/3 2xl:w-2/4 bg-white shadow-lg p-10 pb-10 rounded-lg">
         <div className="flex flex-col items-center justify-center mb-4">
           <h1 className="text-4xl font-semibold text-slate-600 capitalize">
@@ -92,7 +100,7 @@ const UserProfile = () => {
               <FiPhoneCall /> {seekerInfo?.contact ?? "No Contact"}
             </p>
             {seekerInfo?.resumeUrl && (
-              <Link to={seekerInfo?.resumeUrl} target="_blank" >
+              <Link to={seekerInfo?.resumeUrl} target="_blank">
                 <p className="text-blue-700 py-1">Resume</p>
               </Link>
             )}
@@ -117,33 +125,36 @@ const UserProfile = () => {
                 className="w-full h-48 object-contain rounded-lg"
               />
             </div>
-
-           
           </div>
 
           {user.accountType === "seeker" ? (
-              <div className="w-full sm:flex justify-around ">
-                <button
-                  className="w-full sm:w-1/4  bg-blue-600 text-white mt-4 py-2 rounded"
-                  onClick={() => setOpen(true)}
-                >
-                  Edit Profile
-                </button>
+            <div className="w-full sm:flex justify-around ">
+              <button
+                className="w-full sm:w-1/4  bg-blue-600 text-white mt-4 py-2 rounded"
+                onClick={() => setOpen(true)}
+              >
+                Edit Profile
+              </button>
 
-                <button
-                  className="w-full sm:w-1/4 bg-red-600 text-white mt-4 py-2 rounded"
-                  onClick={deleteAccount}
-                >
-                 Delete Account
-                </button>
-              </div>
-            ):
-            <div className="flex justify-start">
-              <button className=" bg-blue-600 p-2 rounded text-white"
-               onClick={()=>window.location.href=`mailto:${seekerInfo?.email}`}
-               >Contact</button>
+              <button
+                className="w-full sm:w-1/4 bg-red-600 text-white mt-4 py-2 rounded"
+                onClick={deleteAccount}
+              >
+                Delete Account
+              </button>
             </div>
-            }
+          ) : (
+            <div className="flex justify-start">
+              <button
+                className=" bg-blue-600 p-2 rounded text-white"
+                onClick={() =>
+                  (window.location.href = `mailto:${seekerInfo?.email}`)
+                }
+              >
+                Contact
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

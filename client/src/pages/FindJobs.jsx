@@ -1,16 +1,21 @@
-import React,{useEffect, useState} from 'react';
-import {useLocation, useNavigate} from 'react-router-dom'
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { experience, jobTypes } from "../utils/data";
 import { BiBriefcaseAlt2 } from "react-icons/bi";
 import { BsStars } from "react-icons/bs";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 
-import {Header, SortBox,JobCard, CustomButton, Loading} from '../components';
-import { apiRequest, updateURl } from '../utils';
-
+import {
+  Header,
+  SortBox,
+  JobCard,
+  CustomButton,
+  Loading,
+  Meta,
+} from "../components";
+import { apiRequest, updateURl } from "../utils";
 
 const FindJobs = () => {
-
   const [sort, setSort] = useState("Newest");
   const [page, setPage] = useState(1);
   const [numPage, setNumPage] = useState(1);
@@ -24,116 +29,98 @@ const FindJobs = () => {
 
   const [isFetching, setIsFetching] = useState(false);
 
-
   const navigate = useNavigate();
   const location = useLocation();
 
-
-  
-
   const filterJobs = (val) => {
-
     // we are checking, if the value is already exists in the state,and if we click again the ckeckbox (un tick), it removes it
     if (filterJobTypes?.includes(val)) {
       setFilterJobTypes(filterJobTypes.filter((el) => el != val));
-    } 
-    
-    else {
+    } else {
       setFilterJobTypes([...filterJobTypes, val]);
     }
   };
 
-
-
-
-  const filterExperience =  (val) => {
+  const filterExperience = (val) => {
     if (filterExp?.includes(val)) {
       setFilterExp(filterExp.filter((el) => el != val));
-    } 
-    
-    else {
+    } else {
       setFilterExp([...filterExp, val]);
     }
   };
 
-  const handleSearchSubmit = async(e) => {
-    
+  const handleSearchSubmit = async (e) => {
     e.preventDefault();
 
     await fetchJobs();
-  }
+  };
 
   const handleShowMore = async (e) => {
-    
     e.preventDefault();
 
-    setPage((prev)=>prev+1)
-  }
+    setPage((prev) => prev + 1);
+  };
 
+  const fetchJobs = async () => {
+    setIsFetching(true);
 
+    const newURl = updateURl({
+      pageNum: page,
+      query: searchQuery,
+      cmpLoc: jobLocation,
+      sort: sort,
+      navigate: navigate,
+      location: location,
+      jType: filterJobTypes,
+      exp: filterExp,
+    });
 
-const fetchJobs = async()=>{
+    const result = await apiRequest({
+      url: "/jobs/find-jobs" + newURl,
+      method: "GET",
+    });
 
+    // console.log(result);
 
-  setIsFetching(true)
+    if (result.status === 200) {
+      setNumPage(result.data.numOfPage);
+      setRecordCount(result.data.totalJobs);
+      setData(result.data.data);
+      setIsFetching(false);
+    } else {
+      console.log(result);
+      setIsFetching(false);
+      toast.error("Something Went Wrong");
+    }
+  };
 
-  const newURl = updateURl({
-    pageNum : page,
-    query:searchQuery,
-    cmpLoc:jobLocation,
-    sort:sort,
-    navigate:navigate,
-    location:location,
-    jType:filterJobTypes,
-    exp:filterExp
-
-  })
-
-  const result = await apiRequest({
-    url:'/jobs/find-jobs'+ newURl,
-    method:"GET"
-  })
-
-  // console.log(result);
-
-  if(result.status === 200){
-
-  setNumPage(result.data.numOfPage)
-  setRecordCount(result.data.totalJobs)
-  setData(result.data.data)
-  setIsFetching(false)
-}
-
-else{
-  console.log(result);
-  setIsFetching(false)
-  toast.error("Something Went Wrong")
-}
-}
-
-useEffect(()=>{
-  fetchJobs();
-},
-[sort,filterExp,filterJobTypes,page])
-
-
+  useEffect(() => {
+    fetchJobs();
+  }, [sort, filterExp, filterJobTypes, page]);
 
   return (
     <>
-  <Header
-  title='Find Your dream Job With Ease'
-  type='Home'
-  handleClick = {handleSearchSubmit}
-  searchQuery = {searchQuery}
-  setSearchQuery = {setSearchQuery}
-  location={jobLocation}
-  setLocation={setJobLocation}
-  
-  />
+      <Meta
+        userTitle="Discover Jobs That Match Your Skills | Worknity"
+        cmpTitle="Connect with Top Talent Effortlessly | Worknity"
+        userDescption="Find exciting job opportunities with ease! Search, filter, and apply to jobs that match your skills and ambitions. Your dream job is just a click away!"
+        cmpDescription="Post your job openings and find top talent fast. Streamline your hiring process and connect with qualified candidates who are ready to make an impact."
+        robots="index, follow"
+        canonical="https://worknity.netlify.app/"
+      />
 
-<div className="container mx-auto flex gap-6 2xl:gap-10 md:px-5 py-0 md:py-6 ">
+      <Header
+        title="Find Your dream Job With Ease"
+        type="Home"
+        handleClick={handleSearchSubmit}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        location={jobLocation}
+        setLocation={setJobLocation}
+      />
 
-<div className="hidden md:flex flex-col w-1/6 h-fit bg-white shadow-xl px-3 rounded-md">
+      <div className="container mx-auto flex gap-6 2xl:gap-10 md:px-5 py-0 md:py-6 ">
+        <div className="hidden md:flex flex-col w-1/6 h-fit bg-white shadow-xl px-3 rounded-md">
           <p className="text-lg font-semibold text-slate-600">Filter Search</p>
 
           <div className="py-2">
@@ -150,7 +137,10 @@ useEffect(()=>{
 
             <div className="flex flex-col gap-2">
               {jobTypes.map((jType, index) => (
-                <div key={index} className="flex gap-2 text-sm md:text-base items-center">
+                <div
+                  key={index}
+                  className="flex gap-2 text-sm md:text-base items-center"
+                >
                   <input
                     type="checkbox"
                     value={jType}
@@ -178,7 +168,7 @@ useEffect(()=>{
             </div>
 
             <div className="flex flex-col gap-2">
-              {experience.map(({title, value},index) => (
+              {experience.map(({ title, value }, index) => (
                 <div key={index} className="flex items-center gap-3">
                   <input
                     type="checkbox"
@@ -187,7 +177,6 @@ useEffect(()=>{
                     onChange={(e) => filterExperience(e.target.value)}
                   />
                   <span>{title}</span>
-                  
                 </div>
               ))}
             </div>
@@ -195,7 +184,6 @@ useEffect(()=>{
         </div>
 
         <div className="w-full md:w-5/6 px-5 md:px-0">
-
           <div className="flex items-center justify-between flex-col sm:flex-row mb-4">
             <p className="text-base">
               Shwoing: <span className="font-semibold">{recordCount}</span> Jobs
@@ -211,41 +199,35 @@ useEffect(()=>{
 
           <div className="w-full flex flex-wrap gap-4 max-[600px]:justify-center">
             {data.map((job) => {
-
               let jobData = {
-                name:job.company.name,
-                logo:job.company.profileUrl,
-                ...job
-              }
+                name: job.company.name,
+                logo: job.company.profileUrl,
+                ...job,
+              };
 
-             return<JobCard data={jobData} key={job._id} />
-})}
+              return <JobCard data={jobData} key={job._id} />;
+            })}
           </div>
 
           {isFetching && (
-          <div className='py-10'>
-            <Loading />
-          </div>
+            <div className="py-10">
+              <Loading />
+            </div>
           )}
 
           {numPage > page && (
             <div className="w-full flex items-center justify-center pt-16">
               <CustomButton
-              onClick={handleShowMore}
+                onClick={handleShowMore}
                 title="Load More"
                 containerStyles={`text-blue-600 py-1.5 px-5 focus:outline-none hover:bg-blue-700 hover:text-white rounded-full text-base border border-blue-600`}
               />
             </div>
           )}
         </div>
-
-  </div>
-
- 
-
-
+      </div>
     </>
-  )
-}
+  );
+};
 
-export default FindJobs
+export default FindJobs;

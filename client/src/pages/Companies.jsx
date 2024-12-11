@@ -5,6 +5,7 @@ import {
   CustomButton,
   Header,
   Loading,
+  Meta,
   SortBox,
 } from "../components";
 import { apiRequest, updateURl } from "../utils";
@@ -68,6 +69,12 @@ const Companies = () => {
 
   return (
     <div className="w-full ">
+      <Meta
+        title="Explore Top Companies Hiring Now | Worknity"
+        description="Discover a comprehensive list of companies hiring talented professionals. Explore company profiles, job openings, and career opportunities on Worknity today."
+        url="https://worknity.netlify.app/companies"
+        robots="noindex, follow"
+      />
       <Header
         title="Find Your Dream Company"
         type
