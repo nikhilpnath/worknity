@@ -17,10 +17,14 @@ const NavBar = () => {
 
   
   // localstorage change detecting and logging outing the user
-  window.addEventListener("storage", () => {
-    console.log("localStorage change detected!");
-    dispatch(logout());
-  });
+  useEffect(() => {
+    const handleStorageChange = () => {
+      console.log("localStorage change detected!");
+      dispatch(logout());
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, [dispatch]);
 
   return (
     <div className="relative bg-[#f7fdfd] z-50">

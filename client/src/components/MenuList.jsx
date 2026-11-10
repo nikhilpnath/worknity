@@ -79,7 +79,7 @@ const MenuList = ({ user, position }) => {
     <div>
       <Menu as="div" className="inline-block text-left">
         <div className="flex">
-          <Menu.Button className="inline-flex gap-2 w-full rouned-md bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-opacity-20">
+          <Menu.Button className="inline-flex gap-2 w-full rounded-md bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-opacity-20">
             <div className="leading[80px] flex flex-col items-start">
               <p className="text-sm font-semibold">{user?.name}</p>
 

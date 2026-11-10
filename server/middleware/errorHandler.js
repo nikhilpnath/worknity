@@ -1,14 +1,8 @@
 const errorHandler = (err, req, res, next) => {
-  const defaultError = {
-    statusCode: 400,
-    success: "false",
-    error: err.message || err,
-  };
-
-  const { statusCode, success, error } = defaultError;
+  const statusCode = err.statusCode || err.status || 400;
   res.status(statusCode).json({
-    success: success,
-    error: error,
+    success: false,
+    error: err.message || err || "Internal Server Error",
   });
 };
 

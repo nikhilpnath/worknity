@@ -33,13 +33,13 @@ app.use(xss());
 //logging middleware
 app.use(morgan("dev"));
 
-//db connection
-connectToDB();
-
 app.use(router);
 app.use(errorHandler);
 
 const port = process.env.PORT || 8000;
+
+//db connection
+await connectToDB();
 
 app.listen(port, () => {
   console.log(`Running on port ${port}`);

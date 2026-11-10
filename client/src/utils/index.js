@@ -10,7 +10,7 @@ export const API = axios.create({
 export const apiRequest = async ({ url, token, data, method }) => {
   try {
     const result = await API(url, {
-      method: method || "GET",
+      method: (method || "GET").trim().toUpperCase(),
       data: data,
       headers: {
         "Content-Type": "application/json",
@@ -19,7 +19,13 @@ export const apiRequest = async ({ url, token, data, method }) => {
     });
     return result;
   } catch (error) {
-    return error?.response?.data;
+    return (
+      error?.response?.data || {
+        success: false,
+        status: "failed",
+        error: error.message || "Network error. Please try again later.",
+      }
+    );
   }
 };
 
@@ -28,8 +34,9 @@ export const handleFileUpload = async (uploadFile) => {
   formData.append("file", uploadFile);
   formData.append("upload_preset", "worknity");
   try {
+    const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || "di93tppgj";
     const response = await axios.post(
-      "https://api.cloudinary.com/v1_1/di93tppgj/auto/upload",
+      `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`,
       formData
     );
     return response.data.secure_url;

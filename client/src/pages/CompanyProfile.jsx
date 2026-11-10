@@ -66,7 +66,7 @@ const CompanyProfile = () => {
           </h2>
 
           {user?.accountType !== "seeker" && (id ? id === user.id : !id) && (
-            <div className="flex items-center justifu-center py-5 md:py-0 gap-4">
+            <div className="flex items-center justify-center py-5 md:py-0 gap-4">
               <CustomButton
                 onClick={() => setOpenForm(true)}
                 iconRight={<FiEdit3 />}
