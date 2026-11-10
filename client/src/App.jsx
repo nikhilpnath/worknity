@@ -1,10 +1,12 @@
 import AppRoutes from "./routes/Routes";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ScrollToTop } from "./components";
 
 const App = () => {
   return (
     <>
+      <ScrollToTop />
       <ToastContainer
         autoClose={3000}
         closeOnClick={true}

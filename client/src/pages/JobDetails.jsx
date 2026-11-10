@@ -21,6 +21,7 @@ const JobDetails = () => {
   const [selected, setSelected] = useState("0");
   const [similarJobs, setSimilarJobs] = useState([]);
   const [openForm, setOpenForm] = useState(false);
+  const [isApplying, setIsApplying] = useState(false);
 
   const getJobDetails = async () => {
     const result = await apiRequest({
@@ -39,24 +40,41 @@ const JobDetails = () => {
 
   //job apply
   const handleJobApply = async () => {
-    const result = await apiRequest({
-      url: `/user/apply-job/${id}`,
-      token: user.token,
-      method: "POST",
-    });
+    if (!user) {
+      toast.error("Please login to apply for this job");
+      return;
+    }
 
-    if (result.status === 200) {
-      toast.success(result.data.message);
+    if (isApplying) return;
+    setIsApplying(true);
 
-      setTimeout(() => {
-        window.location.reload();
-      }, 800);
-    } else {
-      console.log(result.data.error);
+    try {
+      const result = await apiRequest({
+        url: `/user/apply-job/${id}`,
+        token: user?.token,
+        method: "POST",
+      });
+
+      if (result.status === 200) {
+        toast.success(result?.data?.message || "Applied Successfully");
+        const applicantId = user?.id || user?._id;
+        setJobData((prev) => ({
+          ...prev,
+          applicants: [...(prev?.applicants || []), applicantId],
+        }));
+      } else {
+        toast.error(result?.data?.error || result?.error || "Failed to apply");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Something went wrong while applying");
+    } finally {
+      setIsApplying(false);
     }
   };
 
   useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
     getJobDetails();
   }, [id]);
 
@@ -228,21 +246,24 @@ const JobDetails = () => {
                 )}
               </div>
 
-              {user.accountType === "seeker" ? (
-                jobData.applicants.includes(user.id) ? (
+              {user?.accountType === "seeker" ? (
+                jobData?.applicants?.includes(user?.id || user?._id) ? (
                   <div className=" w-1/4 flex justify-center items-center gap-1 text-green-600  py-3 px-5 rounded-full text-lg mx-auto">
                     <IoIosCheckmarkCircle />
                     <p>Applied</p>
                   </div>
                 ) : (
                   <CustomButton
-                    title="Apply Now"
+                    title={isApplying ? "Applying..." : "Apply Now"}
                     onClick={handleJobApply}
-                    containerStyles={`w-44 justify-center text-white bg-black py-3 px-5 outline-none rounded-full text-base`}
+                    disabled={isApplying}
+                    containerStyles={`w-44 justify-center text-white bg-black py-3 px-5 outline-none rounded-full text-base ${
+                      isApplying ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
                   />
                 )
               ) : (
-                jobData.company._id === user.id && (
+                jobData?.company?._id === (user?.id || user?._id) && (
                   <div className="sm:flex gap-3">
                     <CustomButton
                       title="Edit Job"
