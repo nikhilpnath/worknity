@@ -10,6 +10,7 @@ import errorHandler from "./middleware/errorHandler.js";
 import { connectToDB } from "./config/db.js";
 
 const app = express();
+app.set("trust proxy", 1);
 
 app.use(
   cors({
