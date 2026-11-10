@@ -1,6 +1,6 @@
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import morgan from "morgan";
 import helmet from "helmet";
 import { xss } from "express-xss-sanitizer";
@@ -9,13 +9,11 @@ import router from "./routes/index.js";
 import errorHandler from "./middleware/errorHandler.js";
 import { connectToDB } from "./config/db.js";
 
-dotenv.config();
-
 const app = express();
 
 app.use(
   cors({
-    origin: "https://worknity.netlify.app",
+    origin: process.env.CLIENT_URL,
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
@@ -28,8 +26,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(helmet());
 
 //data sanitization middlewares
-app.use(xss());
 app.use(mongoSanitize());
+app.use(xss());
 
 //logging middleware
 app.use(morgan("dev"));

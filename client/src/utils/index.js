@@ -1,7 +1,6 @@
 import axios from "axios";
 
-// const API_URL = "http://localhost:8000/api";
-const API_URL ='https://worknity.onrender.com/api';
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
 
 export const API = axios.create({
   baseURL: API_URL,
@@ -11,7 +10,7 @@ export const API = axios.create({
 export const apiRequest = async ({ url, token, data, method }) => {
   try {
     const result = await API(url, {
-      method: method || "GET ",
+      method: method || "GET",
       data: data,
       headers: {
         "Content-Type": "application/json",

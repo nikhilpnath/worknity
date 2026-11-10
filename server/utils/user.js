@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 export const findByCredentials = async (Model, email, password) => {
   const user = await Model.findOne({ email });
