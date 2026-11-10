@@ -3,7 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import morgan from "morgan";
 import helmet from "helmet";
-import xss from "xss-clean";
+import { xss } from "express-xss-sanitizer";
 import mongoSanitize from "express-mongo-sanitize";
 import router from "./routes/index.js";
 import errorHandler from "./middleware/errorHandler.js";
